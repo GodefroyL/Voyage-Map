@@ -2,30 +2,39 @@ package com.example.voyage_map.data.api
 
 import com.google.gson.annotations.SerializedName
 
-/**
- * Represents the root of the Geoapify Places API response.
- * It's a GeoJSON FeatureCollection.
- */
+// --- Root Response ---
 data class GeoapifyResponse(
     val features: List<GeoapifyFeature>
 )
 
-/**
- * Represents a single GeoJSON Feature, which corresponds to a place.
- */
+// --- Feature and Geometry ---
 data class GeoapifyFeature(
-    val properties: GeoapifyProperties
+    val properties: GeoapifyProperties,
+    val geometry: Geometry
 )
 
-/**
- * Contains the detailed properties of a place returned by the Geoapify API.
- */
+data class Geometry(
+    // Note: GeoJSON format is [longitude, latitude]
+    val coordinates: List<Double>
+)
+
+// --- Properties and Sub-Models for Ranking ---
 data class GeoapifyProperties(
+    // Fields for UI display
     val name: String?,
-    val city: String?,
-    val country: String?,
     @SerializedName("address_line2") val fullAddress: String?,
-    val lat: Double?,
-    val lon: Double?,
-    @SerializedName("place_id") val placeId: String
+
+    // Fields for ranking
+    val categories: List<String>?,
+    @SerializedName("place_rank") val placeRank: Int?,
+    val rank: Rank?,
+    @SerializedName("wiki_and_media") val wikiAndMedia: WikiAndMedia?
+)
+
+data class Rank(
+    val importance: Double?
+)
+
+data class WikiAndMedia(
+    val wikipedia: String?
 )
