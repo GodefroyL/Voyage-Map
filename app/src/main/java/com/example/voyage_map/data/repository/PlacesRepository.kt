@@ -2,24 +2,23 @@ package com.example.voyage_map.data.repository
 
 import com.example.voyage_map.data.api.GeoapifyFeature
 import com.example.voyage_map.data.api.GeoapifyRetrofitClient
+import java.util.Locale
 
-// Renamed class to match the file name for consistency
 class PlacesRepository {
 
     private val api = GeoapifyRetrofitClient.api
-    // IMPORTANT: Replace "YOUR_API_KEY" with your actual Geoapify API key
-    private val API_KEY = "YOUR_API_KEY"
+    private val API_KEY = "edd94f28ac0f4335a523909ded0a07f7"
 
     suspend fun getPlacesForCity(
         lat: Double,
         lon: Double
     ): List<GeoapifyFeature> {
 
-        val filter = "circle:$lon,$lat,20000" // 20 km around the center of the city
+        // Reduced search radius from 20km to 5km (5000m) to prevent timeouts
+        val filter = String.format(Locale.US, "circle:%f,%f,5000", lon, lat)
 
-        // The call is correct, it returns the list of features from the response
         return api.getPlaces(
-            categories = "tourism.attraction,tourism.sights,tourism.museum",
+            categories = "tourism.sights",
             filter = filter,
             apiKey = API_KEY
         ).features

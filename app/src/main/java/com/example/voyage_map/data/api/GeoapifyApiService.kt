@@ -6,6 +6,7 @@ import retrofit2.http.Query
 interface GeoapifyApiService {
 
     // Geocoding: Get coordinates from a city name
+    // Removed the trailing '?' from the URL
     @GET("v1/geocode/search")
     suspend fun geocodeCity(
         @Query("text") city: String,
