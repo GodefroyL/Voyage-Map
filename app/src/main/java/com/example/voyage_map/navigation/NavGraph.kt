@@ -20,7 +20,7 @@ fun NavGraph(navController: NavHostController, padding: PaddingValues) {
             HomeScreen()
         }
         composable(NavRoutes.Explore.route) {
-            ExploreScreen()
+            CityDetailsScreen()
         }
         composable(NavRoutes.Favorites.route) {
             FavoritesScreen()

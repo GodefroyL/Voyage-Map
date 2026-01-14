@@ -25,7 +25,14 @@ class ExploreViewModel : ViewModel() {
             _isLoading.value = true
             try {
                 val response = repository.searchPlaces(query)
-                _results.value = response.query?.search ?: emptyList()
+
+                val filtered = response.query?.search
+                    ?.filter {
+                        it.title.contains(query, ignoreCase = true)
+                    }
+                    ?: emptyList()
+
+                _results.value = filtered
             } catch (e: Exception) {
                 e.printStackTrace()
                 _results.value = emptyList()
@@ -34,5 +41,7 @@ class ExploreViewModel : ViewModel() {
             }
         }
     }
+
+
 
 }

@@ -9,7 +9,8 @@ data class Query(
 )
 
 data class WikiPage(
-    val pageid: Int,
+    val id: Int,
     val title: String,
-    val snippet: String
+    val description: String?,   // ✅ ADD THIS
+    val thumbnail: Thumbnail?
 )
