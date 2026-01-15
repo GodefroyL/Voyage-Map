@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CityDetailsViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
     private val locationRepository = LocationRepository()
     private val placesRepository = PlacesRepository()
