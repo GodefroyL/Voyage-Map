@@ -14,7 +14,6 @@ fun BottomBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem("Home", Icons.Filled.Home, NavRoutes.Home.route),
-        BottomNavItem("Explore", Icons.Filled.Search, NavRoutes.Explore.route),
         BottomNavItem("Favorites", Icons.Filled.Favorite, NavRoutes.Favorites.route),
         BottomNavItem("Settings", Icons.Filled.Settings, NavRoutes.Settings.route)
     )

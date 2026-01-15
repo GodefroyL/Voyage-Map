@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import com.example.voyage_map.ui.screens.CityDetailsScreen
 import com.example.voyage_map.ui.screens.FavoritesScreen
 import com.example.voyage_map.ui.screens.HomeScreen
 import com.example.voyage_map.ui.screens.SettingsScreen
@@ -42,7 +41,6 @@ fun VoyageMapApp() {
 
                     val items = listOf(
                         Screen.Home,
-                        Screen.Explore,
                         Screen.Favorites,
                         Screen.Settings
                     )
@@ -70,7 +68,6 @@ fun VoyageMapApp() {
                 modifier = Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Home.route) { HomeScreen() }
-                composable(Screen.Explore.route) { CityDetailsScreen() }
                 composable(Screen.Favorites.route) { FavoritesScreen() }
                 composable(Screen.Settings.route) { SettingsScreen() }
             }
