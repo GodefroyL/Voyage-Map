@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Titles -->
+    <string name="title_favorites">पसंदीदा</string>
+    <string name="title_settings">सेटिंग्स</string>
+
+    <!-- Bottom Navigation Bar -->
+    <string name="screen_home">होम</string>
+    <string name="screen_favorites">पसंदीदा</string>
+    <string name="screen_settings">सेटिंग्स</string>
+
+    <!-- Home/Search Screen -->
+    <string name="home_welcome">आपका स्वागत है!</string>
+    <string name="home_tagline">आसानी से दुनिया का अन्वेषण करें</string>
+    <string name="search_placeholder">एक शहर खोजें</string>
+    <string name="search_button">स्थानों के लिए खोजें</string>
+    <string name="home_popular_destinations_prompt">या हमारे लोकप्रिय स्थलों में से एक का प्रयास करें:</string>
+    <string name="details_top_places">शीर्ष स्थान</string>
+    <string name="details_more_places">और स्थान</string>
+    <!-- Removed problematic apostrophes -->
+    <string name="details_no_places_found">%1$s के लिए कोई स्थान नहीं मिला।</string>
+
+    <!-- Details Items -->
+    <string name="details_icon_content_description_category">श्रेणी</string>
+    <string name="details_icon_content_description_wikipedia">विकिपीडिया पेज खोलें</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_appearance">दिखावट</string>
+    <string name="settings_dark_mode">डार्क मोड</string>
+    <string name="settings_language">भाषा</string>
+    <string name="settings_language_value">हिंदी</string>
+    <string name="settings_about">बारे में</string>
+    <string name="settings_app_version">ऐप संस्करण</string>
+
+    <!-- Error messages -->
+    <string name="error_unknown">एक अज्ञात त्रुटि हुई।</string>
+    <!-- Removed problematic apostrophes -->
+    <string name="error_no_coordinates">%1$s के लिए निर्देशांक नहीं मिल सके।</string>
+
+</resources>

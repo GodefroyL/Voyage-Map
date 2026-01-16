@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Titles -->
+    <string name="title_favorites">Favoris</string>
+    <string name="title_settings">Paramètres</string>
+
+    <!-- Bottom Navigation Bar -->
+    <string name="screen_home">Accueil</string>
+    <string name="screen_favorites">Favoris</string>
+    <string name="screen_settings">Paramètres</string>
+
+    <!-- Home/Search Screen -->
+    <string name="home_welcome">Bienvenue !</string>
+    <string name="home_tagline">Explorez le monde en toute simplicité</string>
+    <string name="search_placeholder">Rechercher une ville</string>
+    <string name="search_button">Rechercher des lieux</string>
+    <string name="home_popular_destinations_prompt">Ou essayez une de nos destinations populaires :</string>
+    <string name="details_top_places">Lieux populaires</string>
+    <string name="details_more_places">Autres lieux</string>
+    <string name="details_no_places_found">Aucun lieu trouvé pour %1$s.</string>
+
+    <!-- Details Items -->
+    <string name="details_icon_content_description_category">Catégorie</string>
+    <string name="details_icon_content_description_wikipedia">Ouvrir la page Wikipédia</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_appearance">Apparence</string>
+    <string name="settings_dark_mode">Mode sombre</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_language_value">Français</string>
+    <string name="settings_about">À propos</string>
+    <!-- Enclosed the string in double quotes to handle the apostrophe -->
+    <string name="settings_app_version">"Version de l'application"</string>
+
+    <!-- Error messages -->
+    <string name="error_unknown">Une erreur inconnue est survenue.</string>
+    <string name="error_no_coordinates">Impossible de trouver les coordonnées pour %1$s.</string>
+
+</resources>

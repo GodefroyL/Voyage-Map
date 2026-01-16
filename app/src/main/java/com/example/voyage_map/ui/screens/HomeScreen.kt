@@ -25,28 +25,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.voyage_map.R
 import com.example.voyage_map.data.api.GeoapifyFeature
 import com.example.voyage_map.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    cityDetailsViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel()
 ) {
-    val places by cityDetailsViewModel.places.collectAsState()
-    val isLoading by cityDetailsViewModel.isLoading.collectAsState()
-    val error by cityDetailsViewModel.error.collectAsState()
-    var query by remember { mutableStateOf("") }
+    val places by homeViewModel.places.collectAsState()
+    val isLoading by homeViewModel.isLoading.collectAsState()
+    val error by homeViewModel.error.collectAsState()
+    var query by remember { mutableStateOf("Paris") }
     var hasSearched by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Voyage Map") },
+                title = { Text(stringResource(R.string.app_name)) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -61,12 +63,12 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.home_welcome),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Explore the world with ease",
+                text = stringResource(R.string.home_tagline),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -75,7 +77,7 @@ fun HomeScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text("Search for a city") },
+                placeholder = { Text(stringResource(R.string.search_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -83,12 +85,12 @@ fun HomeScreen(
             Button(
                 onClick = {
                     hasSearched = true
-                    cityDetailsViewModel.loadCityDetails(query)
+                    homeViewModel.loadCityDetails(query)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             ) {
-                Text("Search for places")
+                Text(stringResource(R.string.search_button))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -100,7 +102,7 @@ fun HomeScreen(
                 error != null -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
-                            text = error ?: "An unknown error occurred.",
+                            text = error ?: stringResource(R.string.error_unknown),
                             color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.Center
                         )
@@ -111,7 +113,7 @@ fun HomeScreen(
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         item {
                             Text(
-                                text = "Or try one of our popular destinations:",
+                                text = stringResource(R.string.home_popular_destinations_prompt),
                                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center
@@ -125,16 +127,16 @@ fun HomeScreen(
                                 onClick = {
                                     query = city
                                     hasSearched = true
-                                    cityDetailsViewModel.loadCityDetails(city)
+                                    homeViewModel.loadCityDetails(city)
                                 }
                             )
                         }
                     }
                 }
                 places.isEmpty() && hasSearched -> {
-                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
-                            text = "No places found for '$query'.",
+                            text = stringResource(R.string.details_no_places_found, query),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center
                         )
@@ -147,7 +149,7 @@ fun HomeScreen(
 
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         item {
-                            Text("Top Places", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         }
                         items(topPlaces) { feature ->
                             PlaceItem(feature, isTopPlace = true)
@@ -156,7 +158,7 @@ fun HomeScreen(
                         if (otherPlaces.isNotEmpty()) {
                             item {
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text("More Places", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                                Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             }
                             items(otherPlaces) { feature ->
                                 PlaceItem(feature, isTopPlace = false)
@@ -222,10 +224,10 @@ fun Modifier.shimmerBackground(shape: Shape = RoundedCornerShape(4.dp)): Modifie
 @Composable
 fun LoadingShimmerEffect() {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text("Top Places", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        item { Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
         items(5) { PlaceItemPlaceholder() }
         item { Spacer(modifier = Modifier.height(8.dp)) }
-        item { Text("More Places", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        item { Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
         items(5) { PlaceItemPlaceholder(isTopPlace = false) }
     }
 }
@@ -264,7 +266,7 @@ fun PlaceItem(feature: GeoapifyFeature, isTopPlace: Boolean) {
         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = getIconForCategory(properties.categories?.firstOrNull()),
-                contentDescription = "Category",
+                contentDescription = stringResource(R.string.details_icon_content_description_category),
                 modifier = Modifier.size(40.dp).padding(end = 16.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -281,7 +283,7 @@ fun PlaceItem(feature: GeoapifyFeature, isTopPlace: Boolean) {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wikiUrl))
                     context.startActivity(intent)
                 }) {
-                    Icon(Icons.Default.Info, contentDescription = "Open Wikipedia page")
+                    Icon(Icons.Default.Info, contentDescription = stringResource(R.string.details_icon_content_description_wikipedia))
                 }
             }
         }

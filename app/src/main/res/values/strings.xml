@@ -1,3 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VoyageMap</string>
+    <string name="app_name" translatable="false">VoyageMap</string>
+
+    <!-- Screen Titles -->
+    <string name="title_favorites">Favorites</string>
+    <string name="title_settings">Settings</string>
+
+    <!-- Bottom Navigation Bar -->
+    <string name="screen_home">Home</string>
+    <string name="screen_favorites">Favorites</string>
+    <string name="screen_settings">Settings</string>
+
+    <!-- Home/Search Screen -->
+    <string name="home_welcome">Welcome!</string>
+    <string name="home_tagline">Explore the world with ease</string>
+    <string name="search_placeholder">Search for a city</string>
+    <string name="search_button">Search for places</string>
+    <string name="home_popular_destinations_prompt">Or try one of our popular destinations:</string>
+    <string name="details_top_places">Top Places</string>
+    <string name="details_more_places">More Places</string>
+    <!-- Removed problematic apostrophes -->
+    <string name="details_no_places_found">No places found for %1$s.</string>
+
+    <!-- Details Items -->
+    <string name="details_icon_content_description_category">Category</string>
+    <string name="details_icon_content_description_wikipedia">Open Wikipedia page</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_value">English</string>
+    <string name="settings_about">About</string>
+    <string name="settings_app_version">App Version</string>
+
+    <!-- Error messages -->
+    <string name="error_unknown">An unknown error occurred.</string>
+    <!-- Removed problematic apostrophes -->
+    <string name="error_no_coordinates">Could not find coordinates for %1$s.</string>
+
 </resources>
