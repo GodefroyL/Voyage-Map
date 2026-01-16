@@ -1,22 +1,22 @@
 package com.example.voyage_map.data.api
 
 import retrofit2.http.GET
-import retrofit2.http.Query
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface WikipediaApiService {
 
-    // 🔍 Search Wikipedia pages
+    // 🔍 SEARCH (MediaWiki API)
     @GET("w/api.php")
     suspend fun searchPages(
         @Query("action") action: String = "query",
         @Query("list") list: String = "search",
-        @Query("srsearch") query: String,
-        @Query("format") format: String = "json"
+        @Query("format") format: String = "json",
+        @Query("srsearch") query: String
     ): WikiSearchResponse
 
-    // 📄 Page summary (REST API)
-    @GET("page/summary/{title}")
+    // 📄 PAGE SUMMARY (REST API)
+    @GET("api/rest_v1/page/summary/{title}")
     suspend fun getPageSummary(
         @Path("title") title: String
     ): WikiSummaryResponse

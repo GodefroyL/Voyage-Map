@@ -1,19 +1,21 @@
 package com.example.voyage_map.data.repository
 
 import com.example.voyage_map.data.api.RetrofitClient
-import com.example.voyage_map.data.api.WikiSummaryResponse
 import com.example.voyage_map.data.api.WikiSearchResponse
+import com.example.voyage_map.data.api.WikiSummaryResponse
 
 class TravelRepository {
 
     private val api = RetrofitClient.wikipediaApi
 
-    // Search pages (used for Explore screen)
-    suspend fun searchPlaces(query: String): WikiSearchResponse {
-        return api.searchPages(query)
+    // 🔍 Search cities / places
+    suspend fun searchPlaces(city: String): WikiSearchResponse {
+        val cityQuery = "$city city"
+        return api.searchPages(query = cityQuery)
     }
 
-    // Get details of a selected place
+
+    // 📄 Page details
     suspend fun getPlaceDetails(title: String): WikiSummaryResponse {
         return api.getPageSummary(title)
     }

@@ -8,12 +8,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomBar(navController: NavController) {
 
     val items = listOf(
         BottomNavItem("Home", Icons.Filled.Home, NavRoutes.Home.route),
-        BottomNavItem("Explore", Icons.Filled.Search, NavRoutes.Explore.route),
         BottomNavItem("Favorites", Icons.Filled.Favorite, NavRoutes.Favorites.route),
         BottomNavItem("Settings", Icons.Filled.Settings, NavRoutes.Settings.route)
     )
