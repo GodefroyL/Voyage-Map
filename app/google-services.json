@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "27871524630",
+    "project_id": "voyage-map-32fb4",
+    "storage_bucket": "voyage-map-32fb4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27871524630:android:a397da8dd0ef482c550237",
+        "android_client_info": {
+          "package_name": "com.example.voyage_map"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKzCfjTeRaiiii46eRhj1Dhg3ziXi6BRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
