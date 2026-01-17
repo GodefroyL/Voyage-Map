@@ -14,23 +14,27 @@ data class GeoapifyFeature(
 )
 
 data class Geometry(
-    // Note: GeoJSON format is [longitude, latitude]
     val coordinates: List<Double>
 )
 
 // --- Properties and Sub-Models for Ranking ---
 data class GeoapifyProperties(
+    @SerializedName("place_id") val placeId: String,
+
     // Fields for UI display
     val name: String?,
     @SerializedName("address_line2") val fullAddress: String?,
 
     // Fields for ranking
     val categories: List<String>?,
-    @SerializedName("place_rank") val placeRank: Int?,
+    @SerializedName("wiki_and_media") val wikiAndMedia: WikiAndMedia?,
+
+    // ADD THESE TWO PROPERTIES
     val rank: Rank?,
-    @SerializedName("wiki_and_media") val wikiAndMedia: WikiAndMedia?
+    @SerializedName("place_rank") val placeRank: Int?
 )
 
+// ADD THIS DATA CLASS
 data class Rank(
     val importance: Double?
 )
