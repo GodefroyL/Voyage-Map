@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.voyage_map">
+    package="com.voyagemap">
 
     <!-- REQUIRED for Retrofit / OkHttp -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- OPTIONAL (only if you actually use them) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-
-    
 
 
     <application

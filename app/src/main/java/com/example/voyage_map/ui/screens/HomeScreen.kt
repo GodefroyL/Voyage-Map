@@ -57,31 +57,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.voyage_map.data.model.PlaceUiModel
+import com.example.voyage_map.R
+import com.example.voyage_map.data.api.GeoapifyFeature
 import com.example.voyage_map.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    cityDetailsViewModel: HomeViewModel = viewModel()
+    homeViewModel: HomeViewModel = viewModel()
 ) {
-    // State from the ViewModel is the single source of truth
-    val places by cityDetailsViewModel.places.collectAsState()
-    val isLoading by cityDetailsViewModel.isLoading.collectAsState()
-    val error by cityDetailsViewModel.error.collectAsState()
-
-    // UI-specific state that doesn't need to live in the ViewModel
-    var query by remember { mutableStateOf("") }
+    val places by homeViewModel.places.collectAsState()
+    val isLoading by homeViewModel.isLoading.collectAsState()
+    val error by homeViewModel.error.collectAsState()
+    var query by remember { mutableStateOf("Paris") }
     var hasSearched by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Voyage Map") },
+                title = { Text(stringResource(R.string.app_name)) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -98,13 +97,13 @@ fun HomeScreen(
         ) {
 
             Text(
-                text = "Welcome!",
+                text = stringResource(R.string.home_welcome),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
-                text = "Explore the world with ease",
+                text = stringResource(R.string.home_tagline),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -114,7 +113,7 @@ fun HomeScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = { Text("Search for a city") },
+                placeholder = { Text(stringResource(R.string.search_placeholder)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -123,48 +122,63 @@ fun HomeScreen(
 
             Button(
                 onClick = {
-                    if (query.isNotBlank()) {
-                        hasSearched = true
-                        cityDetailsViewModel.loadCityDetails(query)
-                    }
+                    hasSearched = true
+                    homeViewModel.loadCityDetails(query)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             ) {
-                Text("Search for places")
+                Text(stringResource(R.string.search_button))
             }
 
             Spacer(Modifier.height(16.dp))
 
             when {
-                isLoading -> LoadingShimmerEffect()
-
-                error != null -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        error ?: "An unknown error occurred.",
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
-                    )
+                isLoading -> {
+                    LoadingShimmerEffect()
                 }
-
-                !hasSearched -> PopularDestinations { city ->
-                    query = city
-                    hasSearched = true
-                    cityDetailsViewModel.loadCityDetails(city)
+                error != null -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = error ?: stringResource(R.string.error_unknown),
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
+                !hasSearched -> {
+                    // Show initial state with popular destinations
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.home_popular_destinations_prompt),
+                                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                                style = MaterialTheme.typography.titleMedium,
+                                textAlign = TextAlign.Center
+                            )
+                        }
 
-                places.isEmpty() -> Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "No places found for \"$query\".",
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center
-                    )
+                        val popularDestinations = listOf("Paris", "London", "Tokyo", "New York", "Rome")
+                        items(popularDestinations) { city ->
+                            DestinationCard(
+                                city = city,
+                                onClick = {
+                                    query = city
+                                    hasSearched = true
+                                    homeViewModel.loadCityDetails(city)
+                                }
+                            )
+                        }
+                    }
+                }
+                places.isEmpty() && hasSearched -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(R.string.details_no_places_found, query),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
                 else -> {
@@ -174,11 +188,7 @@ fun HomeScreen(
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
                         item {
-                            Text(
-                                "Top Places",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         }
 
                         items(topPlaces) { place ->
@@ -194,12 +204,8 @@ fun HomeScreen(
 
                         if (otherPlaces.isNotEmpty()) {
                             item {
-                                Spacer(Modifier.height(8.dp))
-                                Text(
-                                    "More Places",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                             }
 
                             items(otherPlaces) { place ->
@@ -234,8 +240,32 @@ fun PopularDestinations(onClick: (String) -> Unit) {
             )
         }
 
-        items(cities) { city ->
-            DestinationCard(city = city) { onClick(city) }
+@Composable
+fun LoadingShimmerEffect() {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item { Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        items(5) { PlaceItemPlaceholder() }
+        item { Spacer(modifier = Modifier.height(8.dp)) }
+        item { Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        items(5) { PlaceItemPlaceholder(isTopPlace = false) }
+    }
+}
+
+@Composable
+fun PlaceItemPlaceholder(isTopPlace: Boolean = true) {
+    val backgroundColor = if(isTopPlace) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(if (isTopPlace) 4.dp else 2.dp),
+        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+    ) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.size(40.dp).shimmerBackground(RoundedCornerShape(8.dp)))
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Box(modifier = Modifier.fillMaxWidth(0.7f).height(20.dp).shimmerBackground())
+                Box(modifier = Modifier.fillMaxWidth(0.9f).height(16.dp).shimmerBackground())
+            }
         }
     }
 }
@@ -264,8 +294,8 @@ fun PlaceItem(
         ) {
 
             Icon(
-                imageVector = getIconForCategory(place.categories?.firstOrNull()),
-                contentDescription = null,
+                imageVector = getIconForCategory(properties.categories?.firstOrNull()),
+                contentDescription = stringResource(R.string.details_icon_content_description_category),
                 modifier = Modifier.size(40.dp).padding(end = 16.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -276,27 +306,12 @@ fun PlaceItem(
                     Text(it, color = Color.Gray)
                 }
             }
-
-            IconButton(onClick = onLikeClick) {
-                Icon(
-                    imageVector = if (place.isLiked)
-                        Icons.Default.Favorite
-                    else
-                        Icons.Default.FavoriteBorder,
-                    contentDescription = "Like",
-                    tint = if (place.isLiked) Color.Red else Color.Gray
-                )
-            }
-
-            place.wikipediaUrl?.let { url ->
-                IconButton(
-                    onClick = {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        )
-                    }
-                ) {
-                    Icon(Icons.Default.Info, contentDescription = "Wikipedia")
+            properties.wikiAndMedia?.wikipedia?.let { wikiUrl ->
+                IconButton(onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wikiUrl))
+                    context.startActivity(intent)
+                }) {
+                    Icon(Icons.Default.Info, contentDescription = stringResource(R.string.details_icon_content_description_wikipedia))
                 }
             }
         }
