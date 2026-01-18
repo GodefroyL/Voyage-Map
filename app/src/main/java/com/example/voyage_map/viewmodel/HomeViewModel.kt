@@ -69,7 +69,7 @@ class HomeViewModel : ViewModel() {
     /**
      * Toggles the 'isLiked' state for a specific place.
      */
-    fun toggleLike(placeId: String) {
+    fun toggleLike(placeId: String, liked: Boolean) {
         // 'update' is a thread-safe way to modify the StateFlow's value.
         _places.update { currentPlaces ->
             // 'map' creates a new list with the updated item.

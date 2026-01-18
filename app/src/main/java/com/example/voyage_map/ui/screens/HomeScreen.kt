@@ -1,7 +1,5 @@
 package com.example.voyage_map.ui.screens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -20,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
@@ -56,19 +54,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.voyage_map.R
-import com.example.voyage_map.data.api.GeoapifyFeature
+import com.example.voyage_map.data.model.PlaceUiModel
 import com.example.voyage_map.viewmodel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    // NOTE: onLogout parameter removed as requested
     homeViewModel: HomeViewModel = viewModel()
 ) {
     val places by homeViewModel.places.collectAsState()
@@ -81,21 +79,20 @@ fun HomeScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
+                // NOTE: `actions` parameter for logout button is removed
             )
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(horizontal = 16.dp)
         ) {
-
             Text(
                 text = stringResource(R.string.home_welcome),
                 style = MaterialTheme.typography.headlineMedium,
@@ -122,8 +119,10 @@ fun HomeScreen(
 
             Button(
                 onClick = {
-                    hasSearched = true
-                    homeViewModel.loadCityDetails(query)
+                    if (query.isNotBlank()) {
+                        hasSearched = true
+                        homeViewModel.loadCityDetails(query)
+                    }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
@@ -147,28 +146,10 @@ fun HomeScreen(
                     }
                 }
                 !hasSearched -> {
-                    // Show initial state with popular destinations
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        item {
-                            Text(
-                                text = stringResource(R.string.home_popular_destinations_prompt),
-                                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-                                style = MaterialTheme.typography.titleMedium,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-
-                        val popularDestinations = listOf("Paris", "London", "Tokyo", "New York", "Rome")
-                        items(popularDestinations) { city ->
-                            DestinationCard(
-                                city = city,
-                                onClick = {
-                                    query = city
-                                    hasSearched = true
-                                    homeViewModel.loadCityDetails(city)
-                                }
-                            )
-                        }
+                    PopularDestinations { city ->
+                        query = city
+                        hasSearched = true
+                        homeViewModel.loadCityDetails(city)
                     }
                 }
                 places.isEmpty() && hasSearched -> {
@@ -180,42 +161,42 @@ fun HomeScreen(
                         )
                     }
                 }
-
                 else -> {
                     val topPlaces = places.take(5)
                     val otherPlaces = places.drop(5)
 
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
                         item {
-                            Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.details_top_places),
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
 
                         items(topPlaces) { place ->
                             PlaceItem(
                                 place = place,
                                 isTopPlace = true,
-                                onLikeClick = {
-                                    // The UI sends an event to the ViewModel
-                                    cityDetailsViewModel.toggleLike(place.id)
-                                }
+                                onLikeClick = { homeViewModel.toggleLike(place.id, place.isLiked) }
                             )
                         }
 
                         if (otherPlaces.isNotEmpty()) {
                             item {
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(R.string.details_more_places),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
 
                             items(otherPlaces) { place ->
                                 PlaceItem(
                                     place = place,
                                     isTopPlace = false,
-                                    onLikeClick = {
-                                        // The UI sends an event to the ViewModel
-                                        cityDetailsViewModel.toggleLike(place.id)
-                                    }
+                                    onLikeClick = { homeViewModel.toggleLike(place.id, place.isLiked) }
                                 )
                             }
                         }
@@ -239,32 +220,70 @@ fun PopularDestinations(onClick: (String) -> Unit) {
                 textAlign = TextAlign.Center
             )
         }
+        items(cities) { city ->
+            DestinationCard(city = city, onClick = { onClick(city) })
+        }
+    }
+}
 
 @Composable
 fun LoadingShimmerEffect() {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        item { Text(stringResource(R.string.details_top_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        item {
+            Text(
+                stringResource(R.string.details_top_places),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
         items(5) { PlaceItemPlaceholder() }
         item { Spacer(modifier = Modifier.height(8.dp)) }
-        item { Text(stringResource(R.string.details_more_places), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) }
+        item {
+            Text(
+                stringResource(R.string.details_more_places),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        }
         items(5) { PlaceItemPlaceholder(isTopPlace = false) }
     }
 }
 
 @Composable
 fun PlaceItemPlaceholder(isTopPlace: Boolean = true) {
-    val backgroundColor = if(isTopPlace) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    val backgroundColor =
+        if (isTopPlace) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(if (isTopPlace) 4.dp else 2.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor)
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(40.dp).shimmerBackground(RoundedCornerShape(8.dp)))
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .shimmerBackground(RoundedCornerShape(8.dp))
+            )
             Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Box(modifier = Modifier.fillMaxWidth(0.7f).height(20.dp).shimmerBackground())
-                Box(modifier = Modifier.fillMaxWidth(0.9f).height(16.dp).shimmerBackground())
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(20.dp)
+                        .shimmerBackground()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .height(16.dp)
+                        .shimmerBackground()
+                )
             }
         }
     }
@@ -276,8 +295,6 @@ fun PlaceItem(
     isTopPlace: Boolean,
     onLikeClick: () -> Unit
 ) {
-    val context = LocalContext.current
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(if (isTopPlace) 4.dp else 2.dp),
@@ -292,11 +309,12 @@ fun PlaceItem(
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Icon(
-                imageVector = getIconForCategory(properties.categories?.firstOrNull()),
+                imageVector = getIconForCategory(place.categories?.firstOrNull()),
                 contentDescription = stringResource(R.string.details_icon_content_description_category),
-                modifier = Modifier.size(40.dp).padding(end = 16.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .padding(end = 16.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
 
@@ -306,14 +324,15 @@ fun PlaceItem(
                     Text(it, color = Color.Gray)
                 }
             }
-            properties.wikiAndMedia?.wikipedia?.let { wikiUrl ->
-                IconButton(onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(wikiUrl))
-                    context.startActivity(intent)
-                }) {
-                    Icon(Icons.Default.Info, contentDescription = stringResource(R.string.details_icon_content_description_wikipedia))
-                }
+
+            IconButton(onClick = onLikeClick) {
+                Icon(
+                    imageVector = if (place.isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Like",
+                    tint = if (place.isLiked) Color.Red else Color.Gray
+                )
             }
+            // NOTE: Wikipedia IconButton removed as requested
         }
     }
 }
@@ -332,23 +351,6 @@ fun DestinationCard(city: String, onClick: () -> Unit) {
             fontWeight = FontWeight.Bold
         )
     }
-}
-
-@Composable
-fun LoadingShimmerEffect() {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(6) { PlaceItemPlaceholder() }
-    }
-}
-
-@Composable
-fun PlaceItemPlaceholder() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .shimmerBackground()
-    )
 }
 
 fun Modifier.shimmerBackground(
