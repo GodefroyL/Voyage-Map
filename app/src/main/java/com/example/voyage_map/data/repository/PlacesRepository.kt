@@ -1,8 +1,9 @@
 package com.example.voyage_map.data.repository
 
-import com.example.voyage_map.data.api.GeoapifyFeature
 import com.example.voyage_map.data.api.GeoapifyRetrofitClient
 import java.util.Locale
+import com.example.voyage_map.data.model.PlaceUiModel
+import com.example.voyage_map.utils.score // 1. Import the score function
 
 class PlacesRepository {
 
@@ -12,15 +13,23 @@ class PlacesRepository {
     suspend fun getPlacesForCity(
         lat: Double,
         lon: Double
-    ): List<GeoapifyFeature> {
+    ): List<PlaceUiModel> {
 
-        // Reduced search radius from 20km to 5km (5000m) to prevent timeouts
         val filter = String.format(Locale.US, "circle:%f,%f,5000", lon, lat)
 
         return api.getPlaces(
             categories = "tourism.sights",
             filter = filter,
             apiKey = API_KEY
-        ).features
+        ).features.map { feature ->
+            PlaceUiModel(
+                id = "${feature.geometry.coordinates[0]}_${feature.geometry.coordinates[1]}",
+                name = feature.properties.name ?: "Unknown place",
+                address = feature.properties.fullAddress,
+                categories = feature.properties.categories,
+                wikipediaUrl = feature.properties.wikiAndMedia?.wikipedia,
+                score = feature.score() // 2. Add the score parameter here
+            )
+        }
     }
 }
