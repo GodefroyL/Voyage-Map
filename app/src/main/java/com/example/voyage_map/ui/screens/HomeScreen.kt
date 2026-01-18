@@ -72,7 +72,7 @@ fun HomeScreen(
     val places by homeViewModel.places.collectAsState()
     val isLoading by homeViewModel.isLoading.collectAsState()
     val error by homeViewModel.error.collectAsState()
-    var query by remember { mutableStateOf("Paris") }
+    var query by remember { mutableStateOf("") }
     var hasSearched by remember { mutableStateOf(false) }
 
     Scaffold(
