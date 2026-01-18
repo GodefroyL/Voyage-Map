@@ -177,3 +177,4 @@ fun SwitchSettingItem(icon: ImageVector, title: String, initialChecked: Boolean)
         Switch(checked = checked, onCheckedChange = setChecked)
     }
 }
+
