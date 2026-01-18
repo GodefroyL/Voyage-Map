@@ -10,7 +10,12 @@ import androidx.navigation.compose.composable
 import com.example.voyage_map.ui.screens.*
 
 @Composable
-fun NavGraph(navController: NavHostController, padding: PaddingValues) {
+fun NavGraph(
+    navController: NavHostController,
+    padding: PaddingValues,
+    isDarkTheme: Boolean,
+    onThemeToggle: (Boolean) -> Unit
+) {
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Home.route,
@@ -23,7 +28,10 @@ fun NavGraph(navController: NavHostController, padding: PaddingValues) {
             FavoritesScreen()
         }
         composable(NavRoutes.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(
+                isDarkTheme = isDarkTheme,
+                onThemeToggle = onThemeToggle
+            )
         }
     }
 }

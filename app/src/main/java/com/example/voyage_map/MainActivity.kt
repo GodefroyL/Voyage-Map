@@ -1,16 +1,24 @@
 package com.example.voyage_map
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.voyage_map.ui.theme.VoyageMapTheme
+import com.example.voyage_map.viewmodel.ThemeViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            VoyageMapApp()
+            val themeViewModel: ThemeViewModel = viewModel()
+
+            VoyageMapTheme(
+                darkTheme = themeViewModel.isDarkTheme.value
+            ) {
+                VoyageMapApp()
+            }
         }
     }
 }
-
-

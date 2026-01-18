@@ -26,7 +26,10 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    isDarkTheme: Boolean,
+    onThemeToggle: (Boolean) -> Unit
+) {
     val showLanguageDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -51,14 +54,24 @@ fun SettingsScreen() {
             )
         }
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(vertical = 16.dp)
         ) {
+
             SettingsGroup(stringResource(R.string.settings_appearance)) {
-                SwitchSettingItem(icon = Icons.Default.DarkMode, title = stringResource(R.string.settings_dark_mode), initialChecked = false)
+
+                // 🌙 DARK MODE TOGGLE (NOW WORKS)
+                SwitchSettingItem(
+                    icon = Icons.Default.DarkMode,
+                    title = stringResource(R.string.settings_dark_mode),
+                    checked = isDarkTheme,
+                    onCheckedChange = onThemeToggle
+                )
+
                 SettingItem(
                     icon = Icons.Default.Language,
                     title = stringResource(R.string.settings_language),
@@ -66,9 +79,16 @@ fun SettingsScreen() {
                     onClick = { showLanguageDialog.value = true }
                 )
             }
+
             Spacer(modifier = Modifier.height(16.dp))
+
             SettingsGroup(stringResource(R.string.settings_about)) {
-                SettingItem(icon = Icons.Default.Info, title = stringResource(R.string.settings_app_version), value = "1.0.0", onClick = {})
+                SettingItem(
+                    icon = Icons.Default.Info,
+                    title = stringResource(R.string.settings_app_version),
+                    value = "1.0.0",
+                    onClick = {}
+                )
             }
         }
     }
@@ -162,19 +182,31 @@ fun SettingItem(icon: ImageVector, title: String, value: String, onClick: () -> 
 }
 
 @Composable
-fun SwitchSettingItem(icon: ImageVector, title: String, initialChecked: Boolean) {
-    val (checked, setChecked) = remember { mutableStateOf(initialChecked) }
-
+fun SwitchSettingItem(
+    icon: ImageVector,
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = title, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = setChecked)
+        Text(
+            text = title,
+            modifier = Modifier.weight(1f)
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
-
